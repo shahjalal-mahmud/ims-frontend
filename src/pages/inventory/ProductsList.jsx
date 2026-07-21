@@ -29,6 +29,7 @@ import {
   Package,
   Search,
   TriangleAlert,
+  ArrowDownToLine,
 } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -39,6 +40,7 @@ import Pagination from '../../components/ui/Pagination';
 import SearchBar from '../../components/ui/SearchBar';
 import Select from '../../components/ui/Select';
 import StockStatusBadge from '../../components/domain/StockStatusBadge';
+import StockInModal from '../../components/domain/StockInModal';
 import {
   useCategories,
 } from '../../queries/useCategoryQueries';
@@ -49,6 +51,7 @@ import {
   useDeleteProduct,
   useProducts,
 } from '../../queries/useProductQueries';
+import { useCreateStockIn } from '../../queries/useStockInQueries';
 import { useDebounce } from '../../lib/useDebounce';
 import { getErrorMessage } from '../../lib/errors';
 import { formatCurrency } from '../../lib/format';
@@ -115,9 +118,15 @@ export default function ProductsList() {
   const categoriesQuery = useCategories();
   const suppliersQuery = useSuppliers();
   const deleteMutation = useDeleteProduct();
+  const createStockInMutation = useCreateStockIn();
 
   // Local delete-confirmation state — `null` = closed.
   const [deleting, setDeleting] = useState(null);
+
+  // Stock-in modal state — `null` means closed; an object opens the
+  // modal pre-selected to that product (per docs/UI_Screens.md §5 row
+  // action "Record Stock In": opened inline without leaving the list).
+  const [stockInFor, setStockInFor] = useState(null);
 
   // -- Filter mutation helpers -------------------------------------------------
   // Always reset page to 1 when a non-page filter changes (State_Management.md §4).
@@ -170,6 +179,45 @@ export default function ProductsList() {
     });
   };
 
+  // Stock-in modal handlers (row-action entry point). The success
+  // optimistic-quantity patch inside useCreateStockIn updates the
+  // visible row's Stock badge immediately; invalidation refetches
+  // pick up any server-side drift on the next render / focus.
+  const closeStockInModal = () => setStockInFor(null);
+
+  const onStockInSuccess = (response) => {
+    toast.success(response?.data?.message || 'Stock in recorded');
+    // The mutation's onSuccess already patched every cached product
+    // list with newProductQuantity; no extra work needed here beyond
+    // the toast.
+  };
+
+  const onStockInError = (err) => {
+    const status = err?.response?.status;
+    if (status === 401) return; // global interceptor
+
+    if (status === 404) {
+      // The product was deleted while the modal was open; close the
+      // modal and refresh the products list so the dead row disappears
+      // (docs/UI_Screens.md §7 + Error_Handling.md §1 row 4).
+      toast.error(err.response.data?.message || 'Product not found');
+      productsQuery.refetch?.();
+      setStockInFor(null);
+      return;
+    }
+
+    if (status === 500) {
+      // Verbatim per docs/Error_Handling.md §5 + API guide §4.6 —
+      // transaction rolled back, so we reassure the user nothing was
+      // partially applied.
+      toast.error("Couldn't record stock in. Nothing was changed.");
+      return;
+    }
+
+    // Network / unknown — generic fallback (modal stays open).
+    toast.error(getErrorMessage(err));
+  };
+
   // -- Render ----------------------------------------------------------------
   const items = productsQuery.data?.items ?? [];
   const pagination = productsQuery.data?.pagination;
@@ -196,6 +244,14 @@ export default function ProductsList() {
         aria-label={`Edit ${product.name}`}
       >
         <Pencil size={16} />
+      </button>
+      <button
+        type="button"
+        className="btn btn-ghost btn-sm btn-square text-success"
+        onClick={() => setStockInFor(product)}
+        aria-label={`Record stock in for ${product.name}`}
+      >
+        <ArrowDownToLine size={16} />
       </button>
       <button
         type="button"
@@ -389,6 +445,17 @@ export default function ProductsList() {
         onConfirm={handleDelete}
         onCancel={() => setDeleting(null)}
       />
+
+      {stockInFor && (
+        <StockInModal
+          open
+          mutation={createStockInMutation}
+          defaultProductId={stockInFor.id}
+          onClose={closeStockInModal}
+          onSuccess={onStockInSuccess}
+          onError={onStockInError}
+        />
+      )}
     </div>
   );
 }

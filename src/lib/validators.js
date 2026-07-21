@@ -84,3 +84,37 @@ export const productSchema = z.object({
     .min(0, 'Minimum stock level must be a positive integer')
     .optional(),
 });
+
+// Stock In — §5
+// Mirrors the backend's rules (API guide §4.6 / §5.4).
+//   productId     — required, positive int
+//   supplierId    — optional, positive int when present
+//   quantity      — required, integer > 0
+//   purchasePrice — optional, numeric ≥ 0
+//   note          — optional, max 255 chars; blank allowed
+export const stockInSchema = z.object({
+  productId: z.coerce
+    .number({ required_error: 'Product is required' })
+    .int()
+    .positive('Product is required'),
+  supplierId: z.coerce
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .or(z.literal('')),
+  quantity: z.coerce
+    .number({ required_error: 'Quantity is required' })
+    .int()
+    .positive('Quantity must be greater than 0'),
+  purchasePrice: z.coerce
+    .number()
+    .min(0, 'Purchase price must be ≥ 0')
+    .optional()
+    .or(z.literal('')),
+  note: z
+    .string()
+    .max(255, 'Note must be at most 255 characters')
+    .optional()
+    .or(z.literal('')),
+});
