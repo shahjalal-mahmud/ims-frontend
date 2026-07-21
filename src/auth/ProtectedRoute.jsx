@@ -1,6 +1,28 @@
-// placeholder — implemented in a later milestone
-// ProtectedRoute — wraps protected screens; redirects unauthenticated users.
-// See docs/Routing.md.
+// src/auth/ProtectedRoute.jsx
+// While !ready: spinner (we're still waiting on /auth/me.php).
+// While ready && !user: redirect to /login preserving the intended location.
+// Otherwise: render children.
+
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuthContext } from './AuthContext';
+
 export default function ProtectedRoute() {
-  return null;
+  const { user, ready } = useAuthContext();
+  const location = useLocation();
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base-200">
+        <span className="loading loading-spinner loading-lg text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Navigate to="/login" replace state={{ from: location }} />
+    );
+  }
+
+  return <Outlet />;
 }
