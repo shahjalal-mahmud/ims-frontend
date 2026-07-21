@@ -119,6 +119,32 @@ export const stockInSchema = z.object({
     .or(z.literal('')),
 });
 
+// Reports — Date Range (Stock In / Stock Out Report) — §7
+// Both dates optional; YYYY-MM-DD if provided. If both are present,
+// startDate must be <= endDate. The refined error is attached to
+// `endDate` per the documented 422 mapping (UI Screens §11).
+export const dateRangeSchema = z
+  .object({
+    startDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Start date must be a valid date')
+      .optional()
+      .or(z.literal('')),
+    endDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'End date must be a valid date')
+      .optional()
+      .or(z.literal('')),
+  })
+  .refine(
+    (v) =>
+      !v.startDate || !v.endDate || v.startDate <= v.endDate,
+    {
+      message: 'Start date must be before end date',
+      path: ['endDate'],
+    }
+  );
+
 // Stock Out — §6
 // Mirrors the backend's rules (API guide §4.7 / §5.4). The schema is a
 // factory because the soft-capped max-quantity guard is per-product
