@@ -6,13 +6,13 @@ import tailwindcss from '@tailwindcss/vite'
 //
 // Dev-only API proxy: forwards /api/* requests from the Vite dev server
 // (http://localhost:5173) to the PHP backend at
-// http://localhost/inventory-management/backend/api. This avoids CORS
+// http://localhost/inventory-management-backend/api. This avoids CORS
 // preflight during development while preserving `withCredentials: true`
 // so the HttpOnly PHPSESSID cookie still flows to the backend.
 //
 // In production, Vite is not in the picture — `src/config.js` reads
 // VITE_API_BASE_URL directly, so this proxy is dev-only by construction.
-const API_TARGET = 'http://localhost/inventory-management/backend/api'
+const API_TARGET = 'http://localhost/inventory-management-backend/api'
 
 export default defineConfig({
   plugins: [

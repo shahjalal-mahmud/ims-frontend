@@ -38,7 +38,7 @@ The backend is a _stateless-per-request_ JSON API. Every endpoint is a single PH
 All API paths in this guide are relative to a single `BASE_URL` constant. In development:
 
 ```
-BASE_URL = "http://localhost/inventory-management/backend/api"
+BASE_URL = "http://localhost/inventory-management-backend/api"
 ```
 
 Centralize it in a single config file:
@@ -47,7 +47,7 @@ Centralize it in a single config file:
 // src/config.js
 export const BASE_URL =
   import.meta.env.VITE_API_BASE_URL ??
-  "http://localhost/inventory-management/backend/api";
+  "http://localhost/inventory-management-backend/api";
 
 export const API_TIMEOUT_MS = 15000;
 ```
@@ -96,7 +96,7 @@ You never store auth tokens in `localStorage`. The cookie is the auth.
 
 ### 1.6 First-boot checklist
 
-- [ ] Backend reachable at `http://localhost/inventory-management/backend/api/auth/me.php` returns `401` (this is the _expected_ response when no session exists — see §2.1).
+- [ ] Backend reachable at `http://localhost/inventory-management-backend/api/auth/me.php` returns `401` (this is the _expected_ response when no session exists — see §2.1).
 - [ ] `VITE_API_BASE_URL` is set in `.env`.
 - [ ] Axios instance with `baseURL = BASE_URL` and `withCredentials: true` is created once and imported everywhere (see §6.1).
 - [ ] Toast / notification system wired (e.g. `react-hot-toast`, `sonner`).
