@@ -15,7 +15,10 @@ import tailwindcss from '@tailwindcss/vite'
 const API_TARGET = 'http://localhost/inventory-management-backend/api'
 
 export default defineConfig({
-  base: './', // Ensures assets are loaded relative to index.html on cPanel
+  // App is hosted at https://appriyo.com/ims/ — base path must match so
+  // built assets (JS/CSS) are loaded from /ims/assets/... in production.
+  // In dev, Vite still serves from the root regardless of `base`.
+  base: '/ims/',
   plugins: [
     tailwindcss(),
     react()

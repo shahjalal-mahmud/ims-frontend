@@ -1,0 +1,23 @@
+# SPA fallback for React Router.
+#
+# Without these rules, refreshing or directly visiting any route under
+# /ims/ (e.g. /ims/dashboard, /ims/inventory/products) makes Apache
+# look for an actual file at that path, fail to find it, and return 404.
+#
+# The rules below tell Apache: "if the requested file or directory does
+# not exist on disk, serve /ims/index.html instead." React Router then
+# takes over on the client and renders the correct route.
+#
+# Vite copies everything in public/ into dist/ on every build, so this
+# file ends up at the root of the deployed bundle automatically.
+
+RewriteEngine On
+
+# If the request maps to a real file (image, CSS, JS, etc.) — serve it as-is.
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# If the request maps to a real directory — serve it as-is.
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise — rewrite to index.html so React Router can handle the route.
+RewriteRule ^ index.html [L]
