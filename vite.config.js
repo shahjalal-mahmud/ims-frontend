@@ -15,6 +15,7 @@ import tailwindcss from '@tailwindcss/vite'
 const API_TARGET = 'http://localhost/inventory-management-backend/api'
 
 export default defineConfig({
+  base: './', // Ensures assets are loaded relative to index.html on cPanel
   plugins: [
     tailwindcss(),
     react()
