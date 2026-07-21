@@ -1,13 +1,12 @@
-// src/auth/AuthContext.jsx
+// src/auth/AuthProvider.jsx
 // AuthContext — { user, ready, setUser, clear }. See docs/State_Management.md §2.
 // The 401 interceptor (which can't use hooks) reaches the same state via
 // the module-level authStore; this Provider subscribes to that store and
 // re-renders consumers on every change.
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AuthContext } from './AuthContext';
 import { authStore } from './authStore';
-
-const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUserState] = useState(authStore.user);
@@ -29,13 +28,3 @@ export function AuthProvider({ children }) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
-export function useAuthContext() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error('useAuthContext must be used inside <AuthProvider>');
-  }
-  return ctx;
-}
-
-export default AuthContext;

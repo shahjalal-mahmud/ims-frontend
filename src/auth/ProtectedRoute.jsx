@@ -4,7 +4,7 @@
 // Otherwise: render children.
 
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuthContext } from './AuthContext';
+import { useAuthContext } from './useAuthContext';
 
 export default function ProtectedRoute() {
   const { user, ready } = useAuthContext();

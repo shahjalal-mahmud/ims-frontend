@@ -3,7 +3,7 @@
 // an authenticated user must not see the login form.
 
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthContext } from './AuthContext';
+import { useAuthContext } from './useAuthContext';
 
 export default function PublicOnlyRoute() {
   const { user, ready } = useAuthContext();

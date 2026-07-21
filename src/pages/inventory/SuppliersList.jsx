@@ -1,5 +1,11 @@
-// placeholder — implemented in a later milestone
-// Suppliers list page. See docs/UI_Screens.md.
+// Placeholder — Suppliers CRUD ships in Milestone 4.
+// See docs/UI_Screens.md §4 and docs/Frontend_Implementation_Roadmap.md.
+import PlaceholderPage from '../PlaceholderPage';
 export default function SuppliersList() {
-  return null;
+  return (
+    <PlaceholderPage
+      title="Suppliers"
+      description="Manage suppliers here. Full CRUD ships in Milestone 4."
+    />
+  );
 }
