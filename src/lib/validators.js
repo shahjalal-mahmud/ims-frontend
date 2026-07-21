@@ -51,3 +51,36 @@ export const supplierSchema = z.object({
     .optional()
     .or(z.literal('')),
 });
+
+// Product — §4
+// Mirrors the backend's rules (API guide §5.4). `quantity` is intentionally
+// NOT a form field here — it's server-managed via Stock In / Stock Out
+// (UI Screens §6 / API guide §4.5).
+//
+// `categoryId` and `supplierId` are coerced to positive integers so a <select>
+// string value ("3") is accepted by the schema without a manual parse step.
+export const productSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .max(150, 'Name must be at most 150 characters'),
+  categoryId: z.coerce
+    .number({ required_error: 'Category is required' })
+    .int()
+    .positive('Category is required'),
+  supplierId: z.coerce
+    .number({ required_error: 'Supplier is required' })
+    .int()
+    .positive('Supplier is required'),
+  purchasePrice: z.coerce
+    .number({ required_error: 'Purchase price is required' })
+    .min(0, 'Purchase price must be ≥ 0'),
+  sellingPrice: z.coerce
+    .number({ required_error: 'Selling price is required' })
+    .min(0, 'Selling price must be ≥ 0'),
+  minStockLevel: z.coerce
+    .number()
+    .int()
+    .min(0, 'Minimum stock level must be a positive integer')
+    .optional(),
+});
