@@ -30,6 +30,7 @@ import {
   Search,
   TriangleAlert,
   ArrowDownToLine,
+  ArrowUpFromLine,
 } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -41,6 +42,7 @@ import SearchBar from '../../components/ui/SearchBar';
 import Select from '../../components/ui/Select';
 import StockStatusBadge from '../../components/domain/StockStatusBadge';
 import StockInModal from '../../components/domain/StockInModal';
+import StockOutModal from '../../components/domain/StockOutModal';
 import {
   useCategories,
 } from '../../queries/useCategoryQueries';
@@ -52,6 +54,7 @@ import {
   useProducts,
 } from '../../queries/useProductQueries';
 import { useCreateStockIn } from '../../queries/useStockInQueries';
+import { useCreateStockOut } from '../../queries/useStockOutQueries';
 import { useDebounce } from '../../lib/useDebounce';
 import { getErrorMessage } from '../../lib/errors';
 import { formatCurrency } from '../../lib/format';
@@ -119,6 +122,7 @@ export default function ProductsList() {
   const suppliersQuery = useSuppliers();
   const deleteMutation = useDeleteProduct();
   const createStockInMutation = useCreateStockIn();
+  const createStockOutMutation = useCreateStockOut();
 
   // Local delete-confirmation state — `null` = closed.
   const [deleting, setDeleting] = useState(null);
@@ -127,6 +131,11 @@ export default function ProductsList() {
   // modal pre-selected to that product (per docs/UI_Screens.md §5 row
   // action "Record Stock In": opened inline without leaving the list).
   const [stockInFor, setStockInFor] = useState(null);
+
+  // Stock-out modal state — `null` means closed; an object opens the
+  // modal pre-selected to that product (per docs/UI_Screens.md §5 row
+  // action "Record Stock Out": opened inline without leaving the list).
+  const [stockOutFor, setStockOutFor] = useState(null);
 
   // -- Filter mutation helpers -------------------------------------------------
   // Always reset page to 1 when a non-page filter changes (State_Management.md §4).
@@ -218,6 +227,47 @@ export default function ProductsList() {
     toast.error(getErrorMessage(err));
   };
 
+  // Stock-out modal handlers (row-action entry point). The success
+  // optimistic-quantity patch inside useCreateStockOut updates the
+  // visible row's Stock badge immediately; invalidation refetches
+  // pick up any server-side drift on the next render / focus.
+  const closeStockOutModal = () => setStockOutFor(null);
+
+  const onStockOutSuccess = (response) => {
+    toast.success(response?.data?.message || 'Stock out recorded');
+    // The mutation's onSuccess already patched every cached product
+    // list with newProductQuantity; no extra work needed here beyond
+    // the toast.
+  };
+
+  const onStockOutError = (err) => {
+    const status = err?.response?.status;
+    if (status === 401) return; // global interceptor
+
+    if (status === 404) {
+      // The product was deleted while the modal was open; refresh the
+      // products list so the dead row disappears
+      // (docs/UI_Screens.md §8 + Error_Handling.md §1 row 4).
+      toast.error(err.response.data?.message || 'Product not found');
+      productsQuery.refetch?.();
+      return;
+    }
+
+    if (status === 409) {
+      // "Insufficient stock: only N units available" — expected
+      // business-rule conflict (Error_Handling.md §3 + FRONTEND_API_
+      // INTEGRATION_GUIDE.md §4.7). Show verbatim and keep the modal
+      // open so the user can adjust the quantity.
+      toast.error(
+        err.response.data?.message || 'Insufficient stock'
+      );
+      return;
+    }
+
+    // 500 / network / unknown — generic fallback (modal stays open).
+    toast.error(getErrorMessage(err));
+  };
+
   // -- Render ----------------------------------------------------------------
   const items = productsQuery.data?.items ?? [];
   const pagination = productsQuery.data?.pagination;
@@ -252,6 +302,14 @@ export default function ProductsList() {
         aria-label={`Record stock in for ${product.name}`}
       >
         <ArrowDownToLine size={16} />
+      </button>
+      <button
+        type="button"
+        className="btn btn-ghost btn-sm btn-square text-error"
+        onClick={() => setStockOutFor(product)}
+        aria-label={`Record stock out for ${product.name}`}
+      >
+        <ArrowUpFromLine size={16} />
       </button>
       <button
         type="button"
@@ -454,6 +512,17 @@ export default function ProductsList() {
           onClose={closeStockInModal}
           onSuccess={onStockInSuccess}
           onError={onStockInError}
+        />
+      )}
+
+      {stockOutFor && (
+        <StockOutModal
+          open
+          mutation={createStockOutMutation}
+          defaultProductId={stockOutFor.id}
+          onClose={closeStockOutModal}
+          onSuccess={onStockOutSuccess}
+          onError={onStockOutError}
         />
       )}
     </div>

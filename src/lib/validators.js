@@ -118,3 +118,43 @@ export const stockInSchema = z.object({
     .optional()
     .or(z.literal('')),
 });
+
+// Stock Out — §6
+// Mirrors the backend's rules (API guide §4.7 / §5.4). The schema is a
+// factory because the soft-capped max-quantity guard is per-product
+// (the available stock is known only at the moment the modal opens for
+// a given product). Backend 409 ("Insufficient stock") remains the
+// authoritative check — see Error_Handling.md §3.
+//   productId     — required, positive int
+//   quantity      — required, integer > 0, soft-capped at `availableQty`
+//   sellingPrice  — optional, numeric ≥ 0
+//   note          — optional, max 255 chars; blank allowed
+export const stockOutSchema = (availableQty) =>
+  z.object({
+    productId: z.coerce
+      .number({ required_error: 'Product is required' })
+      .int()
+      .positive('Product is required'),
+    quantity: z.coerce
+      .number({ required_error: 'Quantity is required' })
+      .int()
+      .positive('Quantity must be greater than 0')
+      .refine(
+        (q) => availableQty == null || q <= availableQty,
+        availableQty == null
+          ? { message: 'Quantity must be greater than 0' }
+          : {
+              message: `Only ${availableQty} units available`,
+            }
+      ),
+    sellingPrice: z.coerce
+      .number()
+      .min(0, 'Selling price must be ≥ 0')
+      .optional()
+      .or(z.literal('')),
+    note: z
+      .string()
+      .max(255, 'Note must be at most 255 characters')
+      .optional()
+      .or(z.literal('')),
+  });
