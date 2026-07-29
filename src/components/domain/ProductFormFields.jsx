@@ -32,7 +32,10 @@ export default function ProductFormFields({
   quantity,        // shown read-only when editing
 }) {
   // Memoize the option lists so referential equality is stable across
-  // re-renders (otherwise Select's "selected" derivation can flicker).
+  // re-renders. The Select component reads from these on every render
+  // to build its <option> children — recreating the array each render
+  // would still work but is wasteful and makes React diff a fresh key
+  // set every time.
   const categoryOptions = useMemo(
     () => categories.map((c) => ({ value: c.id, label: c.name })),
     [categories]

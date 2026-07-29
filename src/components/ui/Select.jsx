@@ -42,9 +42,26 @@ const Select = forwardRef(function Select(
   };
 
   const inputId = id || registerProps?.name || rest.name;
-  const selectValue = value !== undefined
-    ? value
-    : (registerProps?.value !== undefined ? registerProps.value : '');
+
+  // Controlled vs uncontrolled:
+  //   - If the caller passes `value`, we run controlled (React owns the
+  //     DOM value via `value=`). This is the right mode for `defaultValue`
+  //     prefills or any non-RHF parent.
+  //   - Otherwise we run uncontrolled. RHF's `register()` expects this:
+  //     it tracks the value via its own ref + onChange/onBlur handlers,
+  //     NOT via `value=`. Forcing `value=""` here would cause React to
+  //     reset the user's selection back to the placeholder on every
+  //     re-render, making the dropdown appear unselectable.
+  //
+  // `defaultValue` is read from `registerProps.defaultValue` (set by RHF
+  // from `useForm({ defaultValues })`) so the initial render still shows
+  // the right option for edit mode without going controlled.
+  const isControlled = value !== undefined;
+  const selectValue = isControlled ? value : undefined;
+  const defaultValue =
+    !isControlled && registerProps?.defaultValue !== undefined
+      ? registerProps.defaultValue
+      : undefined;
 
   const handleChange = (e) => {
     if (registerProps?.onChange) registerProps.onChange(e);
@@ -65,6 +82,7 @@ const Select = forwardRef(function Select(
         className={`select select-bordered w-full ${error ? 'select-error' : ''} ${className}`.trim()}
         aria-invalid={error ? 'true' : undefined}
         value={selectValue}
+        defaultValue={defaultValue}
         onChange={handleChange}
         onBlur={registerProps?.onBlur}
         name={registerProps?.name}
