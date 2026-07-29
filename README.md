@@ -62,19 +62,13 @@ npm install
 
 ### 3. Configure environment variables
 
-Create a `.env.development` file (already present in this repo):
+`.env.development` is already present:
 
 ```env
-# In development, leave VITE_API_BASE_URL unset so the Vite proxy
-# (see vite.config.js) forwards /api/* to the PHP backend.
-# VITE_API_BASE_URL=
+VITE_API_BASE_URL=http://localhost/inventory-management-backend/api
 ```
 
-For production builds, create `.env.production`:
-
-```env
-VITE_API_BASE_URL=https://api.your-domain.com
-```
+Leave it untouched during development — the Vite dev proxy (see `vite.config.js`) intercepts `/api/*` requests and forwards them to the PHP backend, so the Axios client can just call `/api/...`.
 
 ### 4. Start the development server
 
@@ -176,19 +170,21 @@ Comprehensive design and implementation docs live in the [`docs/`](./docs) direc
 
 ---
 
-## 🚢 Deployment
+## 🚢 Deployment (XAMPP — local)
 
-1. Build the production bundle:
+The frontend is configured to run out of the box against a PHP backend hosted in XAMPP (`C:\xampp\htdocs\inventory-management-backend\api\`).
+
+1. Build the bundle:
 
    ```bash
    npm run build
    ```
 
-2. The output lives in `dist/`. Because `vite.config.js` sets `base: './'`, assets are loaded relative to `index.html`, making the bundle safe to drop into any subdirectory on cPanel, nginx, or any static host.
+2. Copy the contents of `dist/` into `C:\xampp\htdocs\` (the app is served at `http://localhost/`).
 
-3. Ensure `VITE_API_BASE_URL` is set to your production API origin at build time.
+3. Make sure the PHP backend lives at `C:\xampp\htdocs\inventory-management-backend\api\` so that `<base>/api/...` paths resolve.
 
-4. Upload `dist/` to your hosting provider and configure your web server to serve `index.html` for unknown routes (SPA fallback).
+4. Start Apache from the XAMPP control panel and open `http://localhost/` in your browser.
 
 ---
 

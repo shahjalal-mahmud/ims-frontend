@@ -44,9 +44,9 @@ import StockOutReport from './pages/reports/StockOutReport';
 
 export default function App() {
   return (
-    // basename must match the production subfolder so <Link to="/dashboard">
-    // produces https://appriyo.com/ims/dashboard (not https://appriyo.com/dashboard).
-    <BrowserRouter basename="/ims">
+    // No basename — the app is served at http://localhost/ (XAMPP root),
+    // so <Link to="/dashboard"> produces /dashboard as expected.
+    <BrowserRouter>
       <Routes>
         {/* Public-only */}
         <Route element={<PublicOnlyRoute />}>

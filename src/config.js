@@ -9,9 +9,9 @@
 // session cookie is set on the API origin (the backend), not the dev
 // origin, which is what the browser cares about for `fetch`/XHR.
 //
-// In production, set VITE_API_BASE_URL to the real backend URL (e.g.
-// https://api.example.com). If unset, the fallback below points at the
-// local backend for convenience — change it before deploying.
+// When serving the built bundle directly from XAMPP (without the Vite
+// proxy), set VITE_API_BASE_URL to the absolute URL of the PHP backend,
+// e.g. http://localhost/inventory-management-backend/api.
 export const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || '/api';
 

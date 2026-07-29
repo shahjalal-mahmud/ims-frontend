@@ -4,21 +4,26 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 //
-// Dev-only API proxy: forwards /api/* requests from the Vite dev server
-// (http://localhost:5173) to the PHP backend at
-// http://localhost/inventory-management-backend/api. This avoids CORS
-// preflight during development while preserving `withCredentials: true`
-// so the HttpOnly PHPSESSID cookie still flows to the backend.
+// Local development against a XAMPP-hosted PHP backend.
 //
-// In production, Vite is not in the picture — `src/config.js` reads
-// VITE_API_BASE_URL directly, so this proxy is dev-only by construction.
+// The Vite dev server (http://localhost:5173) forwards /api/* requests to
+// the PHP backend at http://localhost/inventory-management-backend/api.
+// This avoids CORS preflight during development while preserving
+// `withCredentials: true` so the HttpOnly PHPSESSID cookie still flows to
+// the backend.
+//
+// To run the production build under XAMPP, build with `npm run build` and
+// drop the contents of `dist/` into `C:\xampp\htdocs\`. Make sure the
+// backend lives at `\xampp\htdocs\inventory-management-backend\api\` so
+// the rewritten `/api/*` paths resolve.
 const API_TARGET = 'http://localhost/inventory-management-backend/api'
 
 export default defineConfig({
-  // App is hosted at https://appriyo.com/ims/ — base path must match so
-  // built assets (JS/CSS) are loaded from /ims/assets/... in production.
-  // In dev, Vite still serves from the root regardless of `base`.
-  base: '/ims/',
+  // Serve the app at http://localhost/ — the root of XAMPP's htdocs.
+  // Using './' makes built assets resolve relative to index.html, so the
+  // bundle works whether you drop it at the htdocs root or in any
+  // subfolder without rebuilding.
+  base: './',
   plugins: [
     tailwindcss(),
     react()
