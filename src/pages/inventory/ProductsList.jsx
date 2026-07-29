@@ -70,14 +70,19 @@ const DEFAULTS = {
 };
 
 function readFilters(searchParams) {
-  const page = Number(searchParams.get('page') ?? DEFAULTS.page);
+  // `Number('abc')` is NaN — `Number.isFinite(NaN)` is false, so we fall
+  // back to DEFAULTS instead of pushing NaN into the URL / query key
+  // (which would 422 on the backend and break the list).
+  const rawPage = Number(searchParams.get('page'));
+  const rawLimit = Number(searchParams.get('limit'));
   return {
     search: searchParams.get('search') ?? DEFAULTS.search,
     categoryId: searchParams.get('categoryId') ?? DEFAULTS.categoryId,
     supplierId: searchParams.get('supplierId') ?? DEFAULTS.supplierId,
     lowStockOnly: searchParams.get('lowStockOnly') === 'true',
-    page: Number.isFinite(page) && page >= 1 ? page : DEFAULTS.page,
-    limit: Number(searchParams.get('limit') ?? DEFAULTS.limit) || DEFAULTS.limit,
+    page: Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : DEFAULTS.page,
+    limit:
+      Number.isFinite(rawLimit) && rawLimit >= 1 ? rawLimit : DEFAULTS.limit,
   };
 }
 
@@ -95,12 +100,34 @@ function buildParams(filters) {
   return params;
 }
 
-// `lowStockOnly` is sent as the string "true"/"false" per the API guide §4.5.
+// Build the exact param shape `/products/list.php` expects
+// (API guide §4.5): only the documented keys, with the right types.
+// Sending anything else — NaN, undefined, or an extra key — makes the
+// backend respond 422 and the table renders empty. (Pages get their
+// filter values from the URL, where a hand-edited or stale value can
+// easily be a non-number, so we sanitize before sending.)
 function filtersToQuery(filters) {
-  return {
-    ...filters,
-    lowStockOnly: filters.lowStockOnly ? 'true' : 'false',
-  };
+  const params = {};
+
+  if (filters.search) params.search = String(filters.search);
+  if (filters.categoryId) params.categoryId = filters.categoryId;
+  if (filters.supplierId) params.supplierId = filters.supplierId;
+
+  // lowStockOnly: only send when truthy so the backend keeps its default.
+  // API guide §4.5 accepts "true"/"false" as strings.
+  if (filters.lowStockOnly) params.lowStockOnly = 'true';
+
+  // page / limit must be positive integers. Drop NaN / non-finite values
+  // so the backend never sees something it would 422 on.
+  if (Number.isFinite(filters.page) && filters.page >= 1) {
+    params.page = filters.page;
+  }
+  if (Number.isFinite(filters.limit) && filters.limit >= 1) {
+    // API guide §4.5 caps limit at 100.
+    params.limit = Math.min(filters.limit, 100);
+  }
+
+  return params;
 }
 
 export default function ProductsList() {
