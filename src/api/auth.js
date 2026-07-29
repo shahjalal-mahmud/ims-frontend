@@ -1,6 +1,11 @@
 // src/api/auth.js
-// Auth API module — uses the shared Axios client.
+// Thin wrappers around the three auth endpoints. Each function returns
+// the raw Axios response object — the queries layer (src/queries/useAuthQueries.js)
+// reads `response.data.data` after the envelope is unwrapped.
+//
 // Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.1.
+// The 401-handling live here is the Axios interceptor's, not ours —
+// see src/api/client.js for the walkthrough.
 
 import client from './client';
 

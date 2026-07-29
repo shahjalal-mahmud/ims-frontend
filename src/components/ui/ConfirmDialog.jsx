@@ -1,5 +1,11 @@
 // src/components/ui/ConfirmDialog.jsx
 // Thin wrapper over Modal for delete confirmations.
+//
+// Generic by construction — it never names a specific resource. Pass
+// a `title`, `message`, `confirmLabel`, the `danger` flag for delete
+// style, and the `pending` mutation state. Used by every list page
+// that needs a delete confirmation step.
+//
 // Per docs/Component_Architecture.md §3.
 
 import Modal from './Modal';

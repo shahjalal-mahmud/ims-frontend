@@ -1,7 +1,16 @@
 // src/components/ui/SearchBar.jsx
-// Generic search input. Debouncing is the caller's responsibility (per
-// docs/Component_Architecture.md §3 — "useDebounce is used by the caller").
-// Per docs/UI_Design_System.md §5, icon is `Search`.
+// Generic search input — used by the Products list page (and only the
+// Products list right now).
+//
+// Deliberately generic: it doesn't call the API or update the URL by
+// itself. The parent owns the search state, debounces it
+// (src/lib/useDebounce.js), and writes it into the URL. This keeps
+// the same input usable for any future "search a list" surface
+// without dragging in products-specific logic.
+//
+// Debouncing is the caller's responsibility — per
+// docs/Component_Architecture.md §3 "useDebounce is used by the
+// caller". See ProductsList.jsx for the wiring.
 
 import { Search } from 'lucide-react';
 

@@ -1,8 +1,18 @@
 // src/pages/Login.jsx
 // Login screen. RHF + Zod (loginSchema).
-// 401 (bad credentials) → toast the backend message verbatim.
-// 422 (field errors)    → applyServerErrors onto the form (no toast).
-// Other errors           → generic toast fallback.
+//
+// Why this file has its own 401 handler (when the Axios interceptor
+// already handles 401 globally):
+//   The interceptor SKIPS the redirect when the current path is
+//   /login (see src/api/client.js — "wrong credentials is not a
+//   session-expired event"). So a 401 from POST /auth/login.php
+//   falls through to this page, where we want to show the backend's
+//   "Invalid username or password" message verbatim.
+//
+// Error handling:
+//   401 (bad credentials) → toast the backend message verbatim.
+//   422 (field errors)    → applyServerErrors onto the form (no toast).
+//   Other errors          → generic toast fallback.
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

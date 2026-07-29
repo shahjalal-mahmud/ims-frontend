@@ -2,9 +2,12 @@
 // Renders `dashboard.summary.recentActivity` items.
 // Per docs/Component_Architecture.md §4 and docs/UI_Screens.md §2.
 //
-// Items are typed loosely because the API guide doesn't pin the exact
-// shape — they include at least { type, productName, quantity, createdAt }
-// (and supplierName for stock-in). This renderer picks what it can show.
+// The recentActivity payload is typed loosely because the API guide
+// doesn't pin the exact shape — items include at least `{ type,
+// productName, quantity, createdAt }` (and `supplierName` for
+// stock-in). This renderer picks what it can show and falls back to
+// sensible defaults (`Unknown product`, `Activity`) for missing
+// fields.
 
 import {
   ArrowDownToLine,

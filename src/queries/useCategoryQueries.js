@@ -1,10 +1,24 @@
 // src/queries/useCategoryQueries.js
-// Categories queries/mutations. See docs/State_Management.md §1.
+// Categories hooks — list + create/update/delete + invalidate.
 //
-// Invalidation rules (per the table in State_Management.md §1):
+// This is the canonical "list + create/update/delete + invalidate"
+// pattern used by every resource in the app. read it once here and
+// the other useXQueries.js files read the same way:
+//
+//   useCategories()        → useQuery, GET /categories/list.php
+//   useCreateCategory()    → useMutation, invalidates queryKeys.categories
+//   useUpdateCategory()    → useMutation, invalidates queryKeys.categories
+//   useDeleteCategory()    → useMutation, invalidates queryKeys.categories
+//
+// Retries are disabled on 401 (handled globally) and 404 (not a
+// transient failure). Everything else retries once with the default
+// QueryClient backoff.
+//
+// Invalidation rules (per docs/State_Management.md §1):
 //   create / update / delete → queryKeys.categories
-// Category names aren't denormalized into product rows in our API surface,
-// so we don't need to touch queryKeys.products on category writes.
+// Category names aren't denormalized into product rows in our API
+// surface, so we don't need to touch queryKeys.products on category
+// writes.
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {

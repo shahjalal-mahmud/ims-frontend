@@ -1,6 +1,12 @@
 // src/components/ui/EmptyState.jsx
-// Used by every list screen — copy varies per page (see docs/UI_Screens.md).
-// Optional CTA button via `action={{ label, onClick }}`.
+// Used by every list screen — copy varies per page (see
+// docs/UI_Screens.md for the per-page wording).
+//
+// Generic: pass `title`, `description`, optional `icon` (defaults to
+// the Inbox icon), and an optional CTA via `action={{ label, onClick }}`.
+// Pages pick the icon + copy that match their domain (Packages for
+// products, Tags for categories, etc.) — but this file never names a
+// specific resource.
 
 import { Inbox } from 'lucide-react';
 import Card from './Card';

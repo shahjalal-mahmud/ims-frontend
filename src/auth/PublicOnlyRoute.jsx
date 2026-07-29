@@ -1,6 +1,12 @@
 // src/auth/PublicOnlyRoute.jsx
-// If the user is already authenticated, send them to the dashboard —
-// an authenticated user must not see the login form.
+// Mirror of ProtectedRoute, but for the /login page.
+//
+// Three states (kept in lockstep with ProtectedRoute):
+//   - !ready: still waiting on /auth/me.php → spinner (no point
+//             flashing the login form if the user is actually logged in).
+//   - !user: no active session → render the Login page (via <Outlet />).
+//   - user: already authenticated → redirect to /dashboard. An
+//             authenticated user must not see the login form.
 
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthContext } from './useAuthContext';

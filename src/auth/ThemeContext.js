@@ -1,7 +1,11 @@
 // src/auth/ThemeContext.js
-// The bare React context object. Held in its own module so the Provider
-// file (`ThemeProvider.jsx`) is a components-only file, satisfying ESLint's
-// `react-refresh/only-export-components` rule.
+// The bare React context object for the theme.
+//
+// Held in its own module so ThemeProvider.jsx (a components-only file
+// for ESLint's `react-refresh/only-export-components` rule) doesn't
+// also have to export non-component bindings.
+// The Provider lives in ThemeProvider.jsx; consumers use `useTheme`
+// (src/auth/useTheme.js).
 
 import { createContext } from 'react';
 

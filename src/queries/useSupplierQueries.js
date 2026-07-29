@@ -1,10 +1,13 @@
 // src/queries/useSupplierQueries.js
-// Suppliers queries/mutations. See docs/State_Management.md §1.
+// Suppliers hooks — same "list + create/update/delete + invalidate"
+// pattern as src/queries/useCategoryQueries.js. Read that file's
+// top-of-file comment first; this one is structurally identical.
 //
-// Invalidation rules (per State_Management.md §1):
+// Invalidation rules (per docs/State_Management.md §1):
 //   create / update / delete → queryKeys.suppliers
-// Supplier names aren't denormalized into product rows in our API surface,
-// so we don't need to touch queryKeys.products on supplier writes.
+// Supplier names aren't denormalized into product rows in our API
+// surface, so we don't need to touch queryKeys.products on supplier
+// writes.
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {

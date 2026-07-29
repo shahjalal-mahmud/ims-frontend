@@ -1,17 +1,19 @@
 // src/api/products.js
-// Products API module. One function per endpoint, returning the raw
-// Axios response so the queries layer can read the unwrapped envelope.
-// Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.5.
+// Thin wrappers around the Products endpoints. One function per endpoint,
+// each returns the raw Axios response — queries layer unwraps.
 //
-// Per §4.5:
-//   GET    /products/list.php  — params: search, categoryId, supplierId,
-//                                 lowStockOnly, page, limit
-//   GET    /products/get.php   — params: id
-//   POST   /products/create.php — body: { name, categoryId, supplierId,
-//                                       purchasePrice, sellingPrice,
-//                                       minStockLevel? }
-//                                       (NEVER include `quantity`)
-//   PUT    /products/update.php?id= — body: partial subset of the above
+// Called by src/queries/useProductQueries.js. Components never call
+// these directly (per docs/Frontend_Architecture.md §5).
+//
+// Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.5
+//   GET    /products/list.php      — params: search, categoryId, supplierId,
+//                                    lowStockOnly, page, limit
+//   GET    /products/get.php       — params: id
+//   POST   /products/create.php    — body: { name, categoryId, supplierId,
+//                                          purchasePrice, sellingPrice,
+//                                          minStockLevel? }
+//                                    NEVER include `quantity` here.
+//   PUT    /products/update.php?id=— body: partial subset of the above
 //   DELETE /products/delete.php?id=
 
 import client from './client';

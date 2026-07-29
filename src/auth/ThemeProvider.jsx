@@ -1,9 +1,13 @@
 // src/auth/ThemeProvider.jsx
-// Light/dark theme preference. Persisted to localStorage (UI preference only,
-// not auth-related — localStorage auth prohibition is from the API guide).
-// Per docs/State_Management.md §2 and docs/Frontend_Architecture.md §10.
+// Light/dark theme toggle.
 //
-// Applied via `data-theme` on <html> so DaisyUI swaps the palette for free.
+// Persists to localStorage. This is purely a UI preference (the API
+// guide's "don't store auth in localStorage" prohibition is about
+// session data, not user settings). On mount we read the stored
+// value, and on every change we set `data-theme` on <html> so DaisyUI
+// swaps the palette for free — no React tree re-render required.
+//
+// Per docs/State_Management.md §2 and docs/Frontend_Architecture.md §10.
 
 import { useEffect, useMemo, useState } from 'react';
 import { ThemeContext } from './ThemeContext';

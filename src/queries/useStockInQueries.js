@@ -1,7 +1,32 @@
 // src/queries/useStockInQueries.js
-// Stock-in queries/mutations. See docs/State_Management.md §1.
+// Stock-in hooks — list + create + optimistic patch + cascade invalidate.
 //
-// Invalidation rules (per the table in State_Management.md §1):
+// Same "list + create/update/delete + invalidate" pattern as the rest,
+// with two important wrinkles:
+//
+//   (a) OPTIMISTIC PATCH on create.
+//       The POST response includes `newProductQuantity` — the
+//       authoritative new quantity after the stock-in was recorded.
+//       Instead of waiting for every cached product list to refetch,
+//       we proactively rewrite `quantity` on the matching item in
+//       every cached `queryKeys.products(*)` entry. The row's
+//       <StockStatusBadge> updates immediately.
+//
+//       Why this avoids an extra round-trip: a real refetch would
+//       re-list products (with all their filters), the same payload
+//       we just patched, just slower. The patch is correct because
+//       the server's value IS the source of truth (no client guess).
+//       The cached value could only go stale if a separate write
+//       happens between the response and the next refetch — which
+//       TanStack's invalidations below pick up anyway.
+//
+//   (b) CASCADE INVALIDATIONS on create.
+//       Listing stock-in changes qty, which changes product lists,
+//       dashboard totals, and the low-stock report. We invalidate
+//       all of them so the next render / focus picks up anything we
+//       might have missed with the optimistic patch.
+//
+// Invalidation rules (per docs/State_Management.md §1):
 //   createStockIn → queryKeys.stockIn(*),
 //                   queryKeys.product(id),
 //                   queryKeys.products(*) (every list variant),

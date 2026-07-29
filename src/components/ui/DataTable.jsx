@@ -1,13 +1,18 @@
 // src/components/ui/DataTable.jsx
-// Generic table renderer.
-// Per docs/Component_Architecture.md §3 and docs/UI_Design_System.md §7.
+// Generic table renderer used by every list page (Products, Categories,
+// Suppliers, Stock In, Stock Out, all four reports).
+//
+// Reusable by construction — this file knows nothing about categories
+// or products. Callers describe their columns and pass plain row
+// data; the table does the rest.
 //
 // `columns` is an array of:
 //   { key, header, render?(row), className?, headerClassName? }
 // `data` is the rows array.
-// `isLoading` → render Skeleton rows inside the table.
+// `isLoading` → render skeleton rows inside the table.
 // `emptyState` → shown inside the table when data.length === 0.
-// `rowActions` is an optional React node rendered as a final cell on every row.
+// `rowActions` is an optional React node (or a function (row) => node)
+// rendered as a final cell on every row.
 
 import Skeleton from './Skeleton';
 import EmptyState from './EmptyState';

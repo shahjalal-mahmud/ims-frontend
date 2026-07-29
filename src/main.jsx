@@ -1,11 +1,28 @@
 // src/main.jsx
 // Application entry point.
-// Per docs/Frontend_Architecture.md §4 the order from outside-in is:
-//   StrictMode → QueryClientProvider → AuthProvider → AuthBootstrap → App
-// AuthBootstrap fires /auth/me.php once on mount; ProtectedRoute blocks
-// rendering of protected screens until its `ready` flag is set.
-// queryClientHolder is assigned here so the Axios 401 interceptor can
-// clear the cache without needing to use a React hook.
+//
+// Provider order from outside-in (per docs/Frontend_Architecture.md §4):
+//
+//   StrictMode
+//     QueryClientProvider     — gives every hook below access to one
+//                              shared QueryClient (set up below).
+//       ThemeProvider         — localStorage-backed light/dark theme.
+//         AuthProvider        — mirrors the authStore into a React
+//                               context so components can use
+//                               useAuthContext().
+//           AuthBootstrap     — calls /auth/me.php once on mount; flips
+//                               authStore.ready. While not ready,
+//                               ProtectedRoute shows a spinner.
+//             App             — the router + page tree.
+//
+// The QueryClient's default options here are the app-wide defaults;
+// individual hooks can still override per-query (e.g. useMe sets
+// `retry: false` because 401 is expected). We also publish the
+// QueryClient to `queryClientHolder` so the Axios 401 interceptor
+// (which can't use hooks) can clear the cache on session expiry.
+//
+// The Toaster sits at the very top of the tree so any descendant —
+// including the Login page inside AuthBootstrap — can fire toasts.
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

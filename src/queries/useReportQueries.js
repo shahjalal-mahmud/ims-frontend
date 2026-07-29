@@ -1,13 +1,17 @@
 // src/queries/useReportQueries.js
-// Reports queries. See docs/State_Management.md §1.
+// Reports hooks — four read-only endpoints.
 //
-// Keys centralized in lib/queryKeys.js:
+// Keys centralized in src/lib/queryKeys.js (see that file for why a
+// shared factory instead of inline arrays):
 //   reportInventory   — ['reports', 'inventory', categoryId]
 //   reportLowStock    — ['reports', 'lowStock']
 //   reportStockIn     — ['reports', 'stockIn', range]
 //   reportStockOut    — ['reports', 'stockOut', range]
 //
-// All four endpoints are read-only; no mutations are exported.
+// IMPORTANT: the Dashboard's low-stock widget reuses
+// `useLowStockReport()` so the Dashboard and the dedicated
+// /reports/low-stock page share ONE cache entry (Milestone 8 wiring).
+// Don't accidentally rename the key or split the two surfaces.
 //
 // Retry policy (State_Management.md §1): no retry on 401/404/409/422 —
 // these are not transient. 500 + network use the QueryClient default.

@@ -1,14 +1,25 @@
 // src/queries/useProductQueries.js
-// Products queries/mutations. See docs/State_Management.md §1.
+// Products hooks — same "list + create/update/delete + invalidate"
+// pattern as useCategoryQueries.js, but with two extras worth knowing
+// about before your teacher asks:
 //
-// Invalidation rules (per State_Management.md §1):
-//   create / update / delete → queryKeys.products(*) (predicate — invalidate
-//                              every filter variant) and queryKeys.dashboard.
+//   (a) Filters live in URL search params (see the page —
+//       src/pages/inventory/ProductsList.jsx), so the list query key
+//       is the entire filter object. A new filter set gives you a new
+//       cache entry, which is exactly what we want.
+//       `placeholderData: keepPreviousData` keeps the old page of
+//       products on screen while the new one loads — the table
+//       doesn't flash blank between page clicks or filter changes.
 //
-// Filters live in URL search params (State_Management.md §4), so we key
-// the list query off the entire filter object so a filter change yields a
-// new cache entry instead of mutating the old one. `placeholderData:
-// keepPreviousData` keeps the table stable across page/filter changes.
+//   (b) Product writes invalidate EVERY list variant
+//       (queryKeys.products(*)) because the category / supplier /
+//       low-stock filter columns could be denormalized on a server
+//       update — better to be safe than show stale data.
+//
+// Invalidation rules (per docs/State_Management.md §1):
+//   create / update / delete → queryKeys.products(*) and
+//                              queryKeys.dashboard (KPI counts shift)
+//   update                  → additionally queryKeys.product(id)
 
 import {
   keepPreviousData,

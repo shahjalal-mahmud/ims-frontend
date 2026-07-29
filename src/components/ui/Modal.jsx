@@ -1,10 +1,14 @@
 // src/components/ui/Modal.jsx
 // DaisyUI <dialog>-based modal. Traps focus, closes on Esc/backdrop.
-// Per docs/Component_Architecture.md §3 and docs/UI_Design_System.md §9.
+// Generic: this file knows nothing about categories / products / etc.
+// Every domain modal (CategoryModal, SupplierModal, StockInModal,
+// StockOutModal) renders its content as `children`.
 //
-// `open` controls visibility. `onClose` is invoked when the user dismisses
-// via Esc or backdrop click — but NOT while a mutation is in flight
-// (`pending` prop), so a user can't lose their input mid-submit.
+// `open` controls visibility. `onClose` is invoked when the user
+// dismisses via Esc or backdrop click — but NOT while a mutation is
+// in flight (`pending` prop), so a user can't lose their input
+// mid-submit. That single `pending` flag is what makes the modal
+// safe to use from any CRUD flow.
 
 import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
@@ -47,6 +51,9 @@ export default function Modal({
     if (!dialog) return;
 
     const handleCancel = (e) => {
+      // Don't let Esc close the modal mid-submit — the user might
+      // lose their typed input. The Cancel button handles explicit
+      // dismissal (and is also disabled while pending).
       if (pending) {
         e.preventDefault();
         return;
@@ -62,6 +69,8 @@ export default function Modal({
   // it (unless `closeOnBackdrop` is false, e.g. while a mutation is pending).
   const handleClick = (e) => {
     if (pending || !closeOnBackdrop) return;
+    // The native <dialog> fires click events on itself when the
+    // backdrop is clicked (the content has its own click target).
     if (e.target === dialogRef.current) {
       onClose?.();
     }

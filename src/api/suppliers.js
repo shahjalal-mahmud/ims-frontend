@@ -1,11 +1,14 @@
 // src/api/suppliers.js
-// Suppliers API module. One function per endpoint, returning the raw
-// Axios response so the queries layer can read the unwrapped envelope.
-// Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.4.
+// Thin wrappers around the Suppliers endpoints. One function per
+// endpoint, each returns the raw Axios response — queries layer unwraps.
 //
-// Same pattern as api/categories.js. Optional fields (phone / email /
-// address) are passed through verbatim; the backend is the source of truth
-// for required-vs-blank handling.
+// Same pattern as src/api/categories.js. Optional fields (phone / email
+// / address) are passed through verbatim; the backend is the source of
+// truth for required-vs-blank handling.
+//
+// Called by src/queries/useSupplierQueries.js. Components never call
+// these functions directly.
+// Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.4.
 
 import client from './client';
 

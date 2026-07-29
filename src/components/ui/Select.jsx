@@ -1,11 +1,16 @@
 // src/components/ui/Select.jsx
 // Generic <select> with label + error, designed to play nicely with RHF.
+//
 // Per docs/Component_Architecture.md §3.
 //
 // `options` accepts either:
 //   - an array of { value, label } objects
 //   - an array of primitives (used as both value and label)
-// An optional `placeholder` option (with value === '') is added automatically.
+// An optional `placeholder` option (with value === '') is added
+// automatically when `placeholder` is provided.
+//
+// Same `registerProps` merging pattern as Input — see Input.jsx for
+// the comment.
 
 import { forwardRef } from 'react';
 

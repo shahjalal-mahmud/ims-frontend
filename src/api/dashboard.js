@@ -1,9 +1,11 @@
 // src/api/dashboard.js
-// Dashboard API module. Single endpoint: GET /dashboard/summary.php.
-// Endpoint contract: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.2.
+// Single-endpoint wrapper for the Dashboard summary.
 //
-// Returns the raw Axios response so callers can read the unwrapped
-// `response.data.data` payload — consistent with how api/auth.js works.
+// Called by src/queries/useDashboardQuery.js. Returns the raw Axios
+// response (consistent with the other api/* modules) so the caller can
+// read the unwrapped `response.data.data` payload.
+//
+// Endpoint contract: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.2
 
 import client from './client';
 

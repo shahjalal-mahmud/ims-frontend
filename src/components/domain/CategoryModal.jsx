@@ -11,7 +11,8 @@
 // modal; toasts live at the page level.
 //
 // While the mutation is pending, the whole form is disabled (UI Design
-// System §10: disable the form via fieldset, not just the submit button).
+// System §10: disable the form via <fieldset>, not just the submit
+// button — keeps inputs, selects, and submit all locked consistently).
 
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';

@@ -18,9 +18,14 @@
 //     /reports/stock-out            — StockOutReport
 //   *                               — NotFound
 //
+// No `<BrowserRouter basename>` — the app is served at the XAMPP
+// root (http://localhost/), so `<Link to="/dashboard">` produces
+// /dashboard as expected.
+//
 // Each protected child route sets `handle.title`, which the AppShell
-// uses to populate the Topbar heading. This means future milestones
-// can drop a new route in without touching the shell.
+// uses to populate the Topbar heading. That means future milestones
+// can drop in a new route without touching the shell — the title is
+// declared next to the route definition.
 
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './auth/ProtectedRoute';

@@ -1,14 +1,18 @@
 // src/components/ui/Input.jsx
-// Wraps RHF's `register()` and renders label + input + error in one place.
+// Wraps React Hook Form's `register()` and renders label + input + error
+// in one place. Used by every form in the app.
+//
 // Per docs/Component_Architecture.md §3 and docs/UI_Design_System.md §10.
+// Label sits ABOVE the input (not floating). Error renders directly
+// below the field in `text-error text-sm`. Pass any extra input props
+// (type, autoComplete, placeholder, etc.) through `...rest`.
 //
-// Label sits ABOVE the input (not floating). Error renders directly below
-// the field in `text-error text-sm`. Pass any extra input props (type,
-// autoComplete, placeholder, etc.) through `...rest`.
-//
-// Important: this component spreads register's ref/onChange/onBlur/name
-// straight onto the underlying input. Callers that use it via RHF
-// typically spread `{...register('field')}` into `registerProps`.
+// IMPORTANT — `registerProps` pattern: callers that wire this to RHF
+// pass `{...register('field')}` into `registerProps`. We then merge
+// the register ref with our own forwarded ref so both work (RHF needs
+// the ref to read values; the parent might want a ref too). We also
+// wire onChange / onBlur / name from `registerProps` to keep RHF in
+// sync without forcing the caller to spread those by hand.
 
 import { forwardRef } from 'react';
 

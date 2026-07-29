@@ -1,6 +1,13 @@
 // src/components/layout/Topbar.jsx
 // Page-title slot + user menu (username + logout) + theme toggle.
+//
 // Per docs/Component_Architecture.md §1 and docs/UI_Design_System.md §5.
+//
+// Logout: fires POST /auth/logout.php, clears the local user + caches
+// regardless of the network result, and does a hard redirect to
+// /login. The "regardless" part matters — if the session is already
+// gone server-side, the call still 401s, and we still want the user
+// to land on the login page with a clean state.
 
 import toast from 'react-hot-toast';
 import { LogOut, Moon, Sun } from 'lucide-react';

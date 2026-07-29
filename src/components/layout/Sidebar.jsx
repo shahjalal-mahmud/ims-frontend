@@ -1,7 +1,10 @@
 // src/components/layout/Sidebar.jsx
-// Primary navigation for the protected app. Active state highlights the
-// current route via React Router's NavLink. Group headers per module
-// (Inventory, Reports) so the section grows cleanly as future routes land.
+// Primary navigation for the protected app.
+//
+// Active state highlights the current route via React Router's
+// NavLink. Groups (Inventory, Reports) keep the menu organized and
+// grow cleanly as new routes land — just add an item to the right
+// NAV_GROUPS entry.
 //
 // Per docs/Component_Architecture.md §1 and docs/UI_Design_System.md §1.
 

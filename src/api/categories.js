@@ -1,6 +1,10 @@
 // src/api/categories.js
-// Categories API module. One function per endpoint, returning the raw
-// Axios response so the queries layer can read the unwrapped envelope.
+// Thin wrappers around the Categories endpoints. One function per
+// endpoint, each returns the raw Axios response (not unwrapped) — the
+// queries layer is responsible for reading `response.data.data`.
+//
+// Called by src/queries/useCategoryQueries.js. Components never call
+// these functions directly (per docs/Frontend_Architecture.md §5).
 // Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.3.
 
 import client from './client';

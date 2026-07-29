@@ -1,9 +1,12 @@
 // src/components/ui/Skeleton.jsx
 // Placeholder blocks for tables/cards while isLoading.
+//
 // Variants:
 //   row   → table-row-shaped placeholder
 //   card  → dashboard KPI card-sized block
 //   text  → single line
+//   kpi   → KPI-tile-sized block (used by Dashboard)
+//
 // Per docs/UI_Design_System.md §12.
 
 const VARIANT_CLASSES = {

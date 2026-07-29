@@ -1,7 +1,14 @@
 // src/api/reports.js
-// Reports API module. One function per endpoint. All GET, all Auth: Yes.
-// Returns the raw Axios response so the queries layer can read the
-// unwrapped `response.data.data` payload.
+// Thin wrappers around the four Reports endpoints. All GET, all
+// Auth: Yes. Each returns the raw Axios response — queries layer unwraps.
+//
+// Called by src/queries/useReportQueries.js. All four endpoints are
+// read-only; there are no mutations defined here.
+//
+// Empty arrays are a normal success outcome (e.g. /reports/low_stock.php
+// returning [] means "everything is above the minimum stock level" — a
+// happy path, not an error).
+//
 // Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.8.
 
 import client from './client';

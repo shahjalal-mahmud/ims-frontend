@@ -1,13 +1,20 @@
 // src/api/stockOut.js
-// Stock-out API module. One function per endpoint, returning the raw
-// Axios response so the queries layer can read the unwrapped envelope.
-// Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.7.
+// Thin wrappers around the Stock-Out endpoints. One function per
+// endpoint, each returns the raw Axios response — queries layer unwraps.
+//
+// Called by src/queries/useStockOutQueries.js. Components never call
+// these directly.
 //
 // Stock-out records are IMMUTABLE — there is no update or delete
 // endpoint. A wrong entry is corrected by recording a compensating
-// stock-in (per the API guide §4.7 and the Business Logic Spec).
+// stock-in (per docs/Business_Logic_Specification.md).
 //
-// Per §4.7:
+// Note the 409 "Insufficient stock" business-rule response from the
+// POST endpoint — see docs/Error_Handling.md §3: it's an expected
+// outcome, surfaced verbatim to the user (the modal stays open so they
+// can adjust the quantity).
+//
+// Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.7
 //   GET  /stock_out/list.php   — params: productId, page, limit
 //   POST /stock_out/create.php — body: { productId, quantity,
 //                                      sellingPrice?, note? }

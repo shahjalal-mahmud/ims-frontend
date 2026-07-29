@@ -1,5 +1,14 @@
 // src/queries/useAuthQueries.js
-// Auth queries/mutations. See docs/State_Management.md.
+// Auth hooks — wraps the three auth endpoints.
+//
+// Pattern: three hooks, one per endpoint (useMe / useLogin / useLogout).
+// No "list" here (auth has nothing to list), but mutations still
+// invalidate the right cache keys:
+//   - useLogin seeds the `me` cache directly so AuthBootstrap doesn't
+//     need a second fetch.
+//   - useLogout wipes the entire Query cache (so the next logged-in
+//     user doesn't see the previous user's cached data).
+// See docs/State_Management.md for the full state model.
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { login, logout, me } from '../api/auth';

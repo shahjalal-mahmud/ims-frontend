@@ -1,7 +1,15 @@
 // src/auth/ProtectedRoute.jsx
-// While !ready: spinner (we're still waiting on /auth/me.php).
-// While ready && !user: redirect to /login preserving the intended location.
-// Otherwise: render children.
+// Route guard for every authenticated screen.
+//
+// Three states (matches AuthBootstrap's job):
+//   - !ready: AuthBootstrap hasn't finished asking /auth/me.php yet →
+//             show a full-page spinner so the page doesn't flash the
+//             login redirect for a half-second on every reload.
+//   - ready && !user: no active session → redirect to /login. We pass
+//             the current location in `state.from` so the Login page
+//             can bounce the user back to where they were headed after
+//             they sign in.
+//   - ready && user: render the child route (via <Outlet />).
 
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthContext } from './useAuthContext';

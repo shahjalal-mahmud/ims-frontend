@@ -1,5 +1,8 @@
 // src/pages/NotFound.jsx
-// Catch-all 404 page. See docs/Routing.md.
+// Catch-all 404 page. Mounted on `*` in src/App.jsx — anything that
+// doesn't match a route above lands here.
+//
+// See docs/Routing.md.
 
 import { Link } from 'react-router-dom';
 

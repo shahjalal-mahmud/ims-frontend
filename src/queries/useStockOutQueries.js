@@ -1,7 +1,16 @@
 // src/queries/useStockOutQueries.js
-// Stock-out queries/mutations. See docs/State_Management.md §1.
+// Stock-out hooks — list + create + optimistic patch + cascade invalidate.
 //
-// Invalidation rules (per the table in State_Management.md §1):
+// Structurally identical to src/queries/useStockInQueries.js. Read that
+// file's top-of-file comment first; the only differences are:
+//
+//   - The endpoint changes (/stock_out/* vs /stock_in/*).
+//   - 409 "Insufficient stock: only N units available" is an
+//     *expected* business outcome on POST (see
+//     docs/Error_Handling.md §3) — the modal STAYS OPEN and shows the
+//     backend's message verbatim so the user can adjust the quantity.
+//
+// Invalidation rules (per docs/State_Management.md §1):
 //   createStockOut → queryKeys.stockOut(*),
 //                    queryKeys.product(id),
 //                    queryKeys.products(*) (every list variant),

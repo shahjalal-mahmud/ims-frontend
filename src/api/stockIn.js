@@ -1,16 +1,20 @@
 // src/api/stockIn.js
-// Stock-in API module. One function per endpoint, returning the raw
-// Axios response so the queries layer can read the unwrapped envelope.
-// Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.6.
+// Thin wrappers around the Stock-In endpoints. One function per
+// endpoint, each returns the raw Axios response — queries layer unwraps.
+//
+// Called by src/queries/useStockInQueries.js. Components never call
+// these directly.
 //
 // Stock-in records are IMMUTABLE — there is no update or delete
 // endpoint. A wrong entry is corrected by recording a compensating
-// stock-out (per the API guide §4.6 and the Business Logic Spec).
+// stock-out (per docs/Business_Logic_Specification.md). The whole UI
+// surface (StockInList page + the row-action modal on Products) reads
+// from this single file.
 //
-// Per §4.6:
-//   GET  /stock_in/list.php  — params: productId, page, limit
-//   POST /stock_in/create.php — body: { productId, supplierId?, quantity,
-//                                     purchasePrice?, note? }
+// Endpoint contracts: docs/FRONTEND_API_INTEGRATION_GUIDE.md §4.6
+//   GET  /stock_in/list.php   — params: productId, page, limit
+//   POST /stock_in/create.php — body: { productId, supplierId?,
+//                                     quantity, purchasePrice?, note? }
 
 import client from './client';
 

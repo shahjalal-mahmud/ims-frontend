@@ -1,6 +1,7 @@
 // src/components/ui/Button.jsx
-// Single source for every "Save" / "Delete" / "Cancel" button in the app.
-// Per docs/Component_Architecture.md §3 and docs/UI_Design_System.md §6.
+// Single source for every "Save" / "Delete" / "Cancel" button in the
+// app. Generic on purpose: it knows about DaisyUI variants and a
+// loading state, but nothing about products / categories / etc.
 //
 // Variants:
 //   primary   → btn-primary      (Save, Submit, Add)
@@ -10,7 +11,7 @@
 //   icon      → btn-square btn-ghost btn-sm (row actions)
 //
 // `loading` shows DaisyUI's loading spinner and disables the button.
-// Never combines two loading indicators (UI Design System rule).
+// Never combine two loading indicators (UI Design System rule).
 
 const VARIANT_CLASSES = {
   primary: 'btn-primary',
@@ -29,7 +30,9 @@ export default function Button({
   children,
   ...rest
 }) {
-  const base = variant === 'icon' ? 'btn' : 'btn';
+  // `btn-square btn-ghost btn-sm` for `icon`, plain `btn` otherwise —
+  // the DaisyUI base class is always `btn`.
+  const base = 'btn';
   const variantClass = VARIANT_CLASSES[variant] ?? VARIANT_CLASSES.primary;
   const isDisabled = disabled || loading;
 

@@ -1,10 +1,13 @@
 // src/queries/useDashboardQuery.js
-// Dashboard query hook — single read for `/dashboard/summary.php`.
-// See docs/State_Management.md §1.
+// Single-endpoint hook for the Dashboard summary.
 //
-// We do not retry on 401 or 404 (transient retries won't help; the global
-// interceptor already handles 401). 500 + network are retried using the
-// QueryClient default.
+// Read-only — no mutations. The dashboard is invalidated by other
+// hooks (stock-in, stock-out, product writes, etc.) when their data
+// affects the KPI tiles, per docs/State_Management.md §1.
+//
+// We do not retry on 401 or 404 — transient retries won't help, and
+// the global 401 interceptor already handles session expiry. 500 +
+// network fall back to the QueryClient default (one retry).
 
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardSummary } from '../api/dashboard';

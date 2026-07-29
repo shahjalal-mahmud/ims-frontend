@@ -1,6 +1,11 @@
 // src/auth/useAuthContext.js
-// Hook for consuming AuthContext. Kept in its own file so the Provider
-// module only exports components (react-refresh happy).
+// Hook for consuming AuthContext. Kept in its own file so AuthProvider.jsx
+// only exports the Provider component itself — otherwise ESLint's
+// `react-refresh/only-export-components` rule gets grumpy.
+//
+// Returns `{ user, ready, setUser, clear }`. `ready` flips true once
+// AuthBootstrap has finished talking to /auth/me.php; while it's false
+// the protected routes show a spinner.
 
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';

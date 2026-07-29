@@ -2,8 +2,11 @@
 // Protected layout — renders Sidebar + Topbar + <Outlet />. The element on
 // the protected layout route (see docs/Routing.md §2).
 //
-// The Topbar's title comes from the matched child route's handle.title
-// (configured on each route below). Falls back to a sensible default.
+// The Topbar's title comes from a hardcoded mapping here (pathname
+// prefix → label). Each protected route still sets a `handle.title`
+// in App.jsx so future routes can be added in one place if we want
+// route-driven titles; for now the AppShell prefix mapping is what
+// drives the Topbar heading. Falls back to "Dashboard" otherwise.
 
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';

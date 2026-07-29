@@ -1,5 +1,8 @@
 // src/components/ui/Loader.jsx
-// Full-page or inline spinner.
+// Full-page or inline spinner — DaisyUI's loading spinner wrapped at
+// a chosen size. Pass `inline` for a bare span (e.g. next to text),
+// or use the default wrapper for a centered spinner block.
+//
 // Per docs/UI_Design_System.md §12.
 
 export default function Loader({ size = 'md', inline = false, className = '' }) {

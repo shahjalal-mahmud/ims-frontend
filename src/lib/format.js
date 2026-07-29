@@ -2,9 +2,15 @@
 // Shared presentation helpers — currency, date, quantity formatters.
 // See docs/Component_Architecture.md for where these are consumed.
 //
-// Designed for the dashboard + future list screens, not for parse-coercion;
-// anything that needs to parse a string into a number should do so at the
-// edge (Zod schema / form input) so this file stays free of try/catch.
+// Designed for displaying data, not for parse-coercion: anything that
+// needs to parse a string into a number should do so at the edge
+// (Zod schema / form input) so this file stays free of try/catch and
+// stays trivially testable.
+//
+// All formatters guard against null / undefined / NaN — empty or
+// malformed input degrades to a sensible default ('0' or empty
+// string) rather than throwing, so a missing field on a row never
+// crashes the table.
 
 const numberFmt = new Intl.NumberFormat('en-US');
 const currencyFmt = new Intl.NumberFormat('en-US', {

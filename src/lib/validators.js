@@ -1,5 +1,21 @@
 // src/lib/validators.js
-// Zod schemas for forms. See docs/Form_Validation.md.
+// Zod schemas for every form in the app.
+//
+// IMPORTANT: each schema here is a *mirror* of the backend's rules
+// (see docs/FRONTEND_API_INTEGRATION_GUIDE.md §5.4 and the per-endpoint
+// contracts). The frontend is the UX layer — fast inline feedback,
+// no round-trip — but the backend is still the source of truth. A 422
+// can still come back even if the frontend passed its own validation
+// (e.g. a category was deleted between page load and submit, racing
+// against a unique-name check). Mutations funnel any 422 through
+// `applyServerErrors` (src/lib/errors.js) so backend field errors
+// appear on the same form inputs.
+//
+// Inside each schema: there's no need to comment every `.min()` /
+// `.max()` — the rules can be read at a glance. Comments here cover
+// WHY the rule exists or WHY a field uses a particular Zod construct
+// (e.g. `.coerce` for <select> string values, `.or(z.literal(""))` for
+// blank-allowed optional fields).
 
 import { z } from 'zod';
 

@@ -1,8 +1,13 @@
 // src/auth/AuthProvider.jsx
-// AuthContext — { user, ready, setUser, clear }. See docs/State_Management.md §2.
-// The 401 interceptor (which can't use hooks) reaches the same state via
-// the module-level authStore; this Provider subscribes to that store and
-// re-renders consumers on every change.
+// React-side wrapper around the authStore.
+//
+// We use `useState` to mirror the store's `user` and `ready` values,
+// then `useEffect` to subscribe to store updates. Whenever the
+// interceptor (src/api/client.js) or AuthBootstrap writes to the
+// store, this Provider re-renders — and so do every consumer of
+// AuthContext (via useAuthContext).
+//
+// See docs/State_Management.md §2 for the full state model.
 
 import { useEffect, useState } from 'react';
 import { AuthContext } from './AuthContext';

@@ -1,7 +1,16 @@
 // src/components/ui/Pagination.jsx
 // Simple prev/next + page-number buttons.
-// Per docs/Component_Architecture.md §3.
-// Driven by the backend's `pagination` object — we just call onPageChange.
+//
+// Generic: this file knows nothing about products or stock-out
+// records. It just renders the pagination controls and calls
+// `onPageChange(nextPage)` when the user clicks. The page hands it
+// the current `page` and the `totalPages` it got from the backend's
+// `pagination` object — that's the whole API.
+//
+// On the layout side: it builds a compact list `1 … (page-1) page
+// (page+1) … totalPages` so the controls stay narrow even when
+// `totalPages` is large. Returns null when there's only one page —
+// no point rendering controls for a single page.
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -19,7 +28,9 @@ export default function Pagination({
     onPageChange?.(next);
   };
 
-  // Build a compact list: 1 … (page-1) page (page+1) … totalPages
+  // Build the compact page list. If there are 7 or fewer pages, show
+  // every page button. Otherwise show 1 … neighbors … last, with the
+  // current page and its neighbors in the middle.
   const pages = [];
   const push = (n) => pages.push(n);
   if (totalPages <= 7) {
