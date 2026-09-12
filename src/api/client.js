@@ -72,16 +72,35 @@ client.interceptors.response.use(
     //       lingering toasts, etc. all get wiped. There's no draft-
     //       recovery mechanism in v1 (see docs/Error_Handling.md §8).
     //
-    // SKIP the redirect if the user is already on /login — a 401 from
-    // /auth/login.php isn't "session expired", it's literally "wrong
-    // password", and the Login page's own error handler wants to show
-    // the backend's message verbatim.
+    // SKIP the global side effects in two cases — neither one is a
+    // real "session expired" event:
+    //
+    //   1. The request IS the bootstrap /auth/me.php call. AuthBootstrap
+    //      calls this on every mount, on every page — including public
+    //      pages like "/" and "/login" — just to check "is anyone
+    //      logged in?". A 401 here simply means "no session", which is
+    //      the normal, expected state for any anonymous visitor. It is
+    //      not a session that WAS valid and expired. AuthBootstrap
+    //      handles this 401 locally (flips authStore.ready, leaves the
+    //      user unauthenticated) — no toast, no redirect needed. We key
+    //      off the request URL rather than the current page so this
+    //      stays correct no matter how many public routes the app ends
+    //      up with (/, /login, /register, ...).
+    //
+    //   2. We're already on /login. A 401 from POST /auth/login.php
+    //      isn't "session expired", it's literally "wrong password",
+    //      and the Login page's own error handler wants to show the
+    //      backend's message verbatim.
     if (status === 401) {
+      const isBootstrapMeCall =
+        typeof error.config?.url === 'string' &&
+        error.config.url.includes('/auth/me.php');
+
       const onLoginPage =
         typeof window !== 'undefined' &&
         window.location.pathname.startsWith('/login');
 
-      if (!onLoginPage) {
+      if (!isBootstrapMeCall && !onLoginPage) {
         authStore.clear();
         const qc = queryClientHolder.get();
         if (qc) qc.clear();
