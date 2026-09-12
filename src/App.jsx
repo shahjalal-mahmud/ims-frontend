@@ -1,22 +1,32 @@
 // src/App.jsx
 // Full route table per docs/Routing.md §1–2.
 //
-//   /login                          — PublicOnlyRoute → Login
-//   /  (layout route, Protected)    — AppShell (Sidebar + Topbar + <Outlet/>)
-//     /                             — index: Navigate → /dashboard
-//     /dashboard                    — Dashboard
-//     /inventory/products           — ProductsList
-//     /inventory/products/new       — ProductForm (create)
-//     /inventory/products/:id/edit  — ProductForm (edit)
-//     /inventory/categories         — CategoriesList
-//     /inventory/suppliers          — SuppliersList
-//     /inventory/stock-in           — StockInList
-//     /inventory/stock-out          — StockOutList
-//     /reports/inventory            — InventoryReport
-//     /reports/low-stock            — LowStockReport
-//     /reports/stock-in             — StockInReport
-//     /reports/stock-out            — StockOutReport
-//   *                               — NotFound
+//   /                                — PublicOnlyRoute → Landing
+//   /login                           — PublicOnlyRoute → Login
+//   /  (layout route, Protected)     — AppShell (Sidebar + Topbar + <Outlet/>)
+//     /dashboard                     — Dashboard
+//     /inventory/products            — ProductsList
+//     /inventory/products/new        — ProductForm (create)
+//     /inventory/products/:id/edit   — ProductForm (edit)
+//     /inventory/categories          — CategoriesList
+//     /inventory/suppliers           — SuppliersList
+//     /inventory/stock-in            — StockInList
+//     /inventory/stock-out           — StockOutList
+//   /reports/inventory               — InventoryReport
+//   /reports/low-stock               — LowStockReport
+//   /reports/stock-in                — StockInReport
+//   /reports/stock-out               — StockOutReport
+//   *                                — NotFound
+//
+// Note on "/" vs the protected layout:
+//   "/" is now owned by the public Landing page (wrapped in
+//   PublicOnlyRoute, same as /login) — an already-authenticated
+//   visitor hitting "/" is redirected to /dashboard by
+//   PublicOnlyRoute's own logic, identical to how it already
+//   handles /login. The protected AppShell no longer declares an
+//   `index` route; its children are absolute paths ("dashboard",
+//   "inventory/products", etc.) that resolve the same as before —
+//   removing the index route doesn't affect them.
 //
 // No `<BrowserRouter basename>` — the app is served at the XAMPP
 // root (http://localhost/), so `<Link to="/dashboard">` produces
@@ -27,10 +37,11 @@
 // can drop in a new route without touching the shell — the title is
 // declared next to the route definition.
 
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './auth/ProtectedRoute';
 import PublicOnlyRoute from './auth/PublicOnlyRoute';
 import AppShell from './components/layout/AppShell';
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
@@ -55,13 +66,13 @@ export default function App() {
       <Routes>
         {/* Public-only */}
         <Route element={<PublicOnlyRoute />}>
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
         </Route>
 
         {/* Protected (AppShell) */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
             <Route
               path="dashboard"
               element={<Dashboard />}
